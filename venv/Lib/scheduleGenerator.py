@@ -39,23 +39,23 @@ def generateBrothers(sheet):
     lastRow = findLastRowNumber(sheet)
     for i in range(firstRow,lastRow):
         name = sheet.cell(i,constants.NAME_COL).value
-        timeStr = sheet.cell(i,constants.TIME_COL).value
         isOnEB = sheet.cell(i, constants.EB_COL).value == "Yes"
         isOnRC = sheet.cell(i, constants.RC_COL).value == "Yes"
         dutiesDone = sheet.cell(i, constants.DUTY_COL).value
         times = [];
-
+        timeCol = constants.TIME_COL
 
         for day in weekDays :
             for waiterNum in range(1,4):
-                waiterStr = day + ", waiter " + str(waiterNum)
-                if waiterStr in timeStr :
+                if sheet.cell(i, timeCol).value == "Yes" :
                     times.append(day + " " + str(waiterNum))
+                timeCol += 1
         for day in otherDays :
-            if day in timeStr:
+            if sheet.cell(i, timeCol).value == "Yes":
                 times.append(day)
+            timeCol += 1
         bro = Brother(name, times, dutiesDone, isOnEB, isOnRC)
-        brothers.append(bro)
+        brothers.insert(0,bro)
     return brothers
 
 def generateWeek(sheet, dutyTimes, brothers, time2IndDict, RCFilter = False):
@@ -81,20 +81,22 @@ def scheduleBestFit(sheet, time, brothers, time2IndDict, RCFilter):
             availbros.remove(availbros[0])
 
     #add the brother to the calendar sheet
-    availbros[0].dutiesDone += 1
-    row, col = time2IndDict[time]
-    c = sheet.cell(col,row, value=availbros[0].name)
-    print(availbros[0].name)
+    if availbros.__len__() > 0:
+        availbros[0].dutiesDone += 1
+        row, col = time2IndDict[time]
+        c = sheet.cell(col, row, value=availbros[0].name)
+    else :
+        print("no one available for time: ", time)
 
 def updateDutiesDone(sheet, Brothers):
-    row = 2
+    row = findLastRowNumber(sheet) - 1
     col = constants.DUTY_COL
     for bro in Brothers:
         c = sheet.cell(row,col, value=bro.dutiesDone)
-        row += 1
+        row -= 1
 
 calendar = Calendar([]);
-filePath = "C:/Users/brand/PycharmProjects/scheduler/venv/Lib/WD_S18.xlsx"
+filePath = "C:/Users/brand/PycharmProjects/scheduler/venv/Lib/WD_S19.xlsx"
 #parse form responses
 wb = load_workbook(filePath)
 timeSheet = wb['Master Sheet']
@@ -103,17 +105,19 @@ Brothers = generateBrothers(timeSheet)
 
 
 
-sheetName = "Week 13"
+sheetName = "Week 1"
 if(sheetName in wb.sheetnames):
-    print("already have sheet generated")
-    wsTest = wb[sheetName]
+    print("already have sheet generated, ignoring command")
+
 else:
     source = wb['BlankWeek']
     wsTest = wb.copy_worksheet(source)
     wsTest.title = sheetName
+    wsCopy = wb.copy_worksheet(wb['Master Sheet'])
+    wsCopy.title = "Copy before " + sheetName
 
-wb.copy_worksheet(wb['Master Sheet'])
-generateWeek(wsTest, dutyTimes, Brothers, dict, False)
-updateDutiesDone(timeSheet, Brothers)
-wb.save(filePath)
+    isRCWeek = False #set this to true when you don't want to include anyone on RC
+    generateWeek(wsTest, dutyTimes, Brothers, dict, isRCWeek)
+    updateDutiesDone(timeSheet, Brothers)
+    wb.save(filePath)
 

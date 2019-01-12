@@ -96,27 +96,29 @@ def updateDutiesDone(sheet, Brothers):
         row -= 1
 
 calendar = Calendar([]);
-filePath = "C:/Users/brand/PycharmProjects/scheduler/venv/Lib/WD_S19.xlsx"
+filePath = constants.FILE_PATH
 #parse form responses
 wb = load_workbook(filePath)
-timeSheet = wb['Master Sheet']
+timeSheet = wb['Time Sheet']
+cmdSheet = wb['Master Sheet']
 dutyTimes, dict = generateTimes()
 Brothers = generateBrothers(timeSheet)
 
 
 
-sheetName = "Week 1"
+sheetName = cmdSheet.cell(1,2).value
+isRCWeek = cmdSheet.cell(2,2).value != "No"
 if(sheetName in wb.sheetnames):
     print("already have sheet generated, ignoring command")
 
 else:
-    source = wb['BlankWeek']
+    source = wb['Blank Week']
     wsTest = wb.copy_worksheet(source)
     wsTest.title = sheetName
-    wsCopy = wb.copy_worksheet(wb['Master Sheet'])
-    wsCopy.title = "Copy before " + sheetName
+    # generate a copy of master sheet
+    #wsCopy = wb.copy_worksheet(wb['Master Sheet'])
+    #wsCopy.title = "Copy before " + sheetName
 
-    isRCWeek = False #set this to true when you don't want to include anyone on RC
     generateWeek(wsTest, dutyTimes, Brothers, dict, isRCWeek)
     updateDutiesDone(timeSheet, Brothers)
     wb.save(filePath)

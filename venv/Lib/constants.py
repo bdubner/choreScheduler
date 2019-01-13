@@ -1,8 +1,8 @@
-NAME_COL = 3 # column of "Name" of brother in Master List
+NAME_COL = 1 # column of "Name" of brother in Master List
 TIME_COL = 5 # column of Available Times of brother in Master List
-EB_COL = 21   # column of Whether person is on E-Board or not
-RC_COL = 22   # column of Whether person is Rush-Chair or not
-DUTY_COL = 23 # column of count of how many duties person has done to date
+EB_COL = 3   # column of Whether person is on E-Board or not
+RC_COL = 4   # column of Whether person is Rush-Chair or not
+DUTY_COL = 20 # column of count of how many duties person has done to date
 W1_COL = 2   # column of 1st waiter on scheduling sheet
 MON_ROW = 3  # row of Monday on scheduling sheet
 FRI_ROW = MON_ROW + 4  # row of Friday on scheduling sheet

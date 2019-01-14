@@ -6,4 +6,4 @@ DUTY_COL = 20 # column of count of how many duties person has done to date
 W1_COL = 2   # column of 1st waiter on scheduling sheet
 MON_ROW = 3  # row of Monday on scheduling sheet
 FRI_ROW = MON_ROW + 4  # row of Friday on scheduling sheet
-FILE_PATH = "C:/Users/brand/PycharmProjects/scheduler/venv/Lib/WD_S19.xlsx"
+FILE_PATH = "WD_S19.xlsx"

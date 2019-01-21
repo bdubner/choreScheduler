@@ -6,7 +6,6 @@ import constants
 
 weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday"]
 otherDays = ["Friday", "Saturday", "Sunday"]
-
 # generate list of assignable week time slots
 def generateTimes():
     dutyTimes = [];
@@ -42,9 +41,10 @@ def generateBrothers(sheet):
         isOnEB = sheet.cell(i, constants.EB_COL).value == "Yes"
         isOnRC = sheet.cell(i, constants.RC_COL).value == "Yes"
         dutiesDone = sheet.cell(i, constants.DUTY_COL).value
+        if(dutiesDone is None):
+            dutiesDone = 0
         times = [];
         timeCol = constants.TIME_COL
-
         for day in weekDays :
             for waiterNum in range(1,4):
                 if sheet.cell(i, timeCol).value == "Yes" :
@@ -79,7 +79,6 @@ def scheduleBestFit(sheet, time, brothers, time2IndDict, RCFilter):
                 availbros.remove(bro)
         if(availbros[0].isOnRC):
             availbros.remove(availbros[0])
-
     #add the brother to the calendar sheet
     if availbros.__len__() > 0:
         availbros[0].dutiesDone += 1
@@ -104,8 +103,6 @@ cmdSheet = wb['Master Sheet']
 dutyTimes, dict = generateTimes()
 Brothers = generateBrothers(timeSheet)
 
-
-
 sheetName = cmdSheet.cell(1,2).value
 isRCWeek = cmdSheet.cell(2,2).value != "No"
 if(sheetName in wb.sheetnames):
@@ -118,8 +115,6 @@ else:
     # generate a copy of master sheet
     #wsCopy = wb.copy_worksheet(wb['Master Sheet'])
     #wsCopy.title = "Copy before " + sheetName
-
     generateWeek(wsTest, dutyTimes, Brothers, dict, isRCWeek)
     updateDutiesDone(timeSheet, Brothers)
     wb.save(filePath)
-
